@@ -55,7 +55,7 @@ def one(input, checkpoint_file):
     Returns
         TODO - define the return value for your project
     """
-    # TODO - collate, place on device, and infer
+    # TODO - preprocess, collate, place on device, and infer
     raise NotImplementedError
 
 
