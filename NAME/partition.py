@@ -1,6 +1,8 @@
+"""partition.py - dataset partitioning"""
+
+
 import argparse
 import json
-from pathlib import Path
 
 import NAME
 
@@ -10,11 +12,11 @@ import NAME
 ###############################################################################
 
 
-def from_dataset(dataset):
-    """Partition from dataset files
+def dataset(name):
+    """Partition a dataset
 
     Arguments
-        dataset - string
+        name - string
             The name of the dataset
 
     Returns
@@ -24,29 +26,29 @@ def from_dataset(dataset):
     """
     # Get a list of filenames without extension to be partitioned
     # TODO - replace with your datasets
-    if dataset == 'DATASET':
+    if name == 'DATASET':
         stems = DATASET_stems()
     else:
-        raise ValueError(f'Dataset {dataset} is not implemented')
+        raise ValueError(f'Dataset {name} is not implemented')
 
     # Partition files
     return from_stems(stems)
 
 
-def from_dataset_to_file(dataset):
-    """Partition and write json file
+def dataset_to_file(name):
+    """Partition dataset and write json file
 
     Arguments
-        dataset - string
+        name - string
             The name of the dataset
     """
     # Create output directory
-    output_directory = NAME.ASSETS_DIR / dataset
+    output_directory = NAME.ASSETS_DIR / name
     output_directory.mkdir(exist_ok=True, parents=True)
 
     # Write partition file
     with open(output_directory / 'partition.json', 'w') as file:
-        json.dump(from_dataset(dataset), file)
+        json.dump(dataset(name), file)
 
 
 def from_stems(stems):
@@ -61,7 +63,7 @@ def from_stems(stems):
             The resulting partitions. The key is the partition name and the
             value is the list of stems belonging to that partition.
     """
-    # TODO
+    # TODO - partition the stems
     raise NotImplementedError
 
 
@@ -77,7 +79,7 @@ def DATASET_stems():
         stems - list(string)
             The list of file stems to partition
     """
-    # TODO
+    # TODO - return a list of stems for this dataset
     raise NotImplementedError
 
 
@@ -94,4 +96,4 @@ def parse_args():
 
 
 if __name__ == '__main__':
-    from_dataset_to_file(**vars(parse_args()))
+    dataset_to_file(parse_args().dataset)

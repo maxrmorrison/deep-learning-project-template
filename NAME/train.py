@@ -1,3 +1,6 @@
+"""train.py - model training"""
+
+
 import argparse
 from pathlib import Path
 
@@ -11,29 +14,18 @@ import NAME
 ###############################################################################
 
 
-def train():
+def main():
     """Train a model"""
-    parser = argparse.ArgumentParser(add_help=False)
-
-    # Add trainer arguments
-    parser = pl.Trainer.add_argparse_args(parser)
-
-    # Add project arguments
-    # TODO - If you have one dataset, change the default to that dataset.
-    #        Otherwise, delete the default.
-    parser.add_argument(
-        '--dataset',
-        default='DATASET',
-        help='The name of the dataset')
-
-    # Parse
-    args = parser.parse_args()
+    # Parse command-line arguments
+    args = parse_args()
 
     # Setup tensorboard
     logger = pl.loggers.TensorBoardLogger('logs', name=Path().parent.name)
 
     # Setup data
-    datamodule = NAME.DataModule(args.dataset)
+    datamodule = NAME.DataModule(args.dataset,
+                                 args.batch_size,
+                                 args.num_workers)
 
     # Setup trainer
     trainer = pl.Trainer.from_argparse_args(args, logger=logger)
@@ -42,5 +34,37 @@ def train():
     trainer.fit(NAME.Model(), datamodule=datamodule)
 
 
+def parse_args():
+    """Parse command-line arguments"""
+    parser = argparse.ArgumentParser(add_help=False)
+
+    # Add project arguments
+    parser.add_argument(
+        '--batch_size',
+        type=int,
+        default=64,
+        help='The size of a batch')
+    # TODO - If you have one dataset, change default to the name of that
+    #        dataset. Otherwise, delete the default.
+    parser.add_argument(
+        '--dataset',
+        default='DATASET',
+        help='The name of the dataset')
+    parser.add_argument(
+        '--num_workers',
+        type=int,
+        help='Number data loading jobs to launch. If None, uses number of ' +
+             'cpu cores.')
+
+    # Add model arguments
+    parser = NAME.Model.add_model_specific_args(parser)
+
+    # Add trainer arguments
+    parser = pl.Trainer.add_argparse_args(parser)
+
+    # Parse
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
-    train()
+    main()

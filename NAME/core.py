@@ -1,7 +1,7 @@
+"""core.py - root module exports"""
+
+
 from pathlib import Path
-
-
-__all__ = ['ASSETS_DIR', 'CACHE_DIR', 'DATA_DIR']
 
 
 ###############################################################################

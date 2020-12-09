@@ -1,7 +1,13 @@
+"""data.py - data loading"""
+
+
 import json
 import os
 
+import pytorch_lightning as pl
 import torch
+
+import NAME
 
 
 ###############################################################################
@@ -10,6 +16,14 @@ import torch
 
 
 class Dataset(torch.utils.data.Dataset):
+    """PyTorch dataset
+
+    Arguments
+        name - string
+            The name of the dataset
+        partition - string
+            The name of the data partition
+    """
 
     def __init__(self, name, partition):
         # Get list of stems
@@ -39,6 +53,10 @@ class DataModule(pl.LightningDataModule):
     Arguments
         name - string
             The name of the dataset
+        batch_size - int
+            The size of a batch
+        num_workers - int or None
+            Number data loading jobs to launch. If None, uses num cpu cores.
     """
 
     def __init__(self, name, batch_size=64, num_workers=None):
@@ -92,8 +110,13 @@ def collate_fn(batch):
             The outputs of __getitem__ for each item in batch
 
     Returns
-        collated - tuple(torch.Tensor, torch.Tensor)
+        collated - tuple
             The input features and ground truth targets ready for inference
     """
-    # TODO
+    # TODO - Perform any necessary padding or slicing to ensure that input
+    #        features and output targets can be concatenated. Then,
+    #        concatenate them and return them as torch tensors. See
+    #        https://pytorch.org/docs/stable/data.html#dataloader-collate-fn
+    #        for more information on the collate function (note that
+    #        automatic batching is enabled).
     raise NotImplementedError
