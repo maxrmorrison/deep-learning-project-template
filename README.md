@@ -63,3 +63,28 @@ Tensorboard. This can be done with `ssh -L 6006:localhost:6006
 Tests are written using `pytest`. Run `pip install pytest` to install pytest.
 Complete all TODOs in `test_model.py` and `test_data.py`, then run `pytest`.
 Adding project-specific tests for preprocessing and inference is encouraged.
+
+
+## FAQ
+
+#### What if I have an especially complex preprocessing pipeline?
+
+In this case, replace `preprocess.py` with a `preprocess` submodule. This will
+be a directory `NAME/preprocess` that contains a module initialization script
+`__init__.py`, an entry point `__main__.py`, and the rest of your preprocessing
+code.
+
+
+#### What if my evaluation includes subjective experiments?
+
+In this case, replace the `<file>` argument of `NAME.evaluate` with a
+directory. Write any objective metrics to a file within this directory, as well
+as any generated files that will be subjectively evaluated.
+
+
+#### How do I release my code so that it can be downloaded via pip?
+
+Code release involves making sure that `setup.py` is up-to-date and then
+uploading your code to [`pypi`](https://www.pypi.org).
+[Here](https://packaging.python.org/tutorials/packaging-projects/) is a good
+tutorial for this process.
