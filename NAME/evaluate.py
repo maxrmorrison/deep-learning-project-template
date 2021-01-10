@@ -13,7 +13,7 @@ import NAME
 ###############################################################################
 
 
-def dataset(name, partition='valid'):
+def dataset(name, partition, model):
     """Evaluate a dataset
 
     Arguments
@@ -35,7 +35,7 @@ def dataset(name, partition='valid'):
     files = [NAME.data.stem_to_file(name, stem) for stem in stems]
 
     # Partition files
-    return from_files(files)
+    return from_files(model, files)
 
 
 def dataset_to_file(name, partition, model, file):
@@ -55,10 +55,12 @@ def dataset_to_file(name, partition, model, file):
         json.dump(dataset(name, partition, model), file)
 
 
-def from_files(files):
+def from_files(model, files):
     """Evaluate files
 
     Arguments
+        model - NAME.Model
+            The model to evaluate
         files - list(string)
             The files to evaluate
 
