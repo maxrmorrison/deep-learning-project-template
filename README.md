@@ -69,17 +69,22 @@ Adding project-specific tests for preprocessing and inference is encouraged.
 
 #### What if I have an especially complex preprocessing pipeline?
 
-In this case, replace `preprocess.py` with a `preprocess` submodule. This will
+I recommend one of two designs.
+1. Replace `preprocess.py` with a `preprocess` submodule. This will
 be a directory `NAME/preprocess` that contains a module initialization script
 `__init__.py`, an entry point `__main__.py`, and the rest of your preprocessing
 code.
+2. Implement only the entry point in `preprocess.py`. Move the data
+transformations to either a new file `transform.py` or new `transform`
+submodule.
 
 
 #### What if my evaluation includes subjective experiments?
 
 In this case, replace the `<file>` argument of `NAME.evaluate` with a
 directory. Write any objective metrics to a file within this directory, as well
-as any generated files that will be subjectively evaluated.
+as any generated files that will be subjectively evaluated. If evaluation
+is especially complex, consider making an `evaluate` submodule.
 
 
 #### How do I release my code so that it can be downloaded via pip?
