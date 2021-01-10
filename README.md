@@ -4,30 +4,30 @@ Throughout this template, `NAME` is used to refer to the name of the project
 and `DATASET` is used to refer to the name of a dataset.
 
 
-### Installation
+## Installation
 
 Clone this repo and run `cd NAME && pip install -e .`.
 
-### Usage
+## Usage
 
-##### Download data
+### Download data
 
 Place datasets in `data/DATASET`, where `DATASET` is the name of the dataset.
 
 
-##### Partition data
+### Partition data
 
 Complete all TODOs in `partition.py`, then run `python -m NAME.partition
 DATASET`.
 
 
-##### Preprocess data
+### Preprocess data
 
 Complete all TODOs in `preprocess.py`, then run `python -m NAME.preprocess
 DATASET`. All preprocessed data is saved in `cache/DATASET`.
 
 
-##### Train
+### Train
 
 Complete all TODOs in `data.py` and `model.py`. Then, create a directory in
 `runs` for your experiment. Logs, checkpoints, and results should be saved to
@@ -36,13 +36,21 @@ DATASET <args>`. See the [PyTorch Lightning trainer flags](https://pytorch-light
 for additional arguments.
 
 
-##### Infer
+### Evaluate
+
+Complete all TODOs in `evaluate.py`, then run `python -m NAME.evaluate DATASET
+<partition> <checkpoint> <file>`, where `<partition>` is the name of the
+partition to evaluate, `<checkpoint>` is the checkpoint file to evaluate, and
+`<file>` is the json file to write results to.
+
+
+### Infer
 
 Complete all TODOs in `infer.py`, then run `python -m NAME.infer
 <input_file> <output_file> <checkpoint_file>`.
 
 
-##### Monitor
+### Monitor
 
 Run `tensorboard --logdir runs/<run>/logs`. If you are running training
 remotely, you must create a SSH connection with port forwarding to view
@@ -50,7 +58,7 @@ Tensorboard. This can be done with `ssh -L 6006:localhost:6006
 <user>@<server-ip-address>`. Then, open `localhost:6006` in your browser.
 
 
-##### Test
+### Test
 
 Tests are written using `pytest`. Run `pip install pytest` to install pytest.
 Complete all TODOs in `test_model.py` and `test_data.py`, then run `pytest`.
