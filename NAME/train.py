@@ -31,7 +31,7 @@ def main():
     trainer = pl.Trainer.from_argparse_args(args, logger=logger)
 
     # Train
-    trainer.fit(NAME.Model(), datamodule=datamodule)
+    trainer.fit(NAME.Model(args), datamodule=datamodule)
 
 
 def parse_args():
