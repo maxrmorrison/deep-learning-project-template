@@ -122,7 +122,7 @@ def collate_fn(batch):
 
 
 ###############################################################################
-# Utilities
+# File organization
 ###############################################################################
 
 
@@ -164,6 +164,11 @@ def stem_to_file(name, stem):
         return DATASET_stem_to_file(directory, stem)
 
     raise ValueError(f'Dataset {name} is not implemented')
+
+    
+###############################################################################
+# Utilities
+###############################################################################
 
 
 def DATASET_stem_to_file(directory, stem):
