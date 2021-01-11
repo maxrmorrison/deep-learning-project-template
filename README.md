@@ -67,7 +67,21 @@ Adding project-specific tests for preprocessing and inference is encouraged.
 
 ## FAQ
 
-#### What if I have an especially complex preprocessing pipeline?
+### What is the directory `NAME/assets` for?
+
+This directory is for
+[_package data_](https://packaging.python.org/guides/distributing-packages-using-setuptools/#package-data).
+When you pip install a package, pip will
+automatically copy the python files to the installation folder (in
+`site_packages`). Pip will _not_ automatically copy files that are not Python
+files. So if your code depends on non-Python files to run (e.g., a pretrained
+model, normalizing statistics, or data partitions), you have to manually
+specify these files in `setup.py`. This is done for you in this repo. In
+general, only small files that are essential at runtime should be placed in
+this folder.
+
+
+### What if I have an especially complex preprocessing pipeline?
 
 I recommend one of two designs.
 1. Replace `preprocess.py` with a `preprocess` submodule. This will
@@ -79,7 +93,7 @@ transformations to either a new file `transform.py` or new `transform`
 submodule.
 
 
-#### What if my evaluation includes subjective experiments?
+### What if my evaluation includes subjective experiments?
 
 In this case, replace the `<file>` argument of `NAME.evaluate` with a
 directory. Write any objective metrics to a file within this directory, as well
@@ -87,7 +101,7 @@ as any generated files that will be subjectively evaluated. If evaluation
 is especially complex, consider making an `evaluate` submodule.
 
 
-#### How do I release my code so that it can be downloaded via pip?
+### How do I release my code so that it can be downloaded via pip?
 
 Code release involves making sure that `setup.py` is up-to-date and then
 uploading your code to [`pypi`](https://www.pypi.org).
