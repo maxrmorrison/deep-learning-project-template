@@ -63,7 +63,8 @@ Tensorboard. This can be done with `ssh -L 6006:localhost:6006
 
 Tests are written using `pytest`. Run `pip install pytest` to install pytest.
 Complete all TODOs in `test_model.py` and `test_data.py`, then run `pytest`.
-Adding project-specific tests for preprocessing and inference is encouraged.
+Adding project-specific tests for preprocessing, inference, and inference is
+encouraged.
 
 
 ## FAQ
