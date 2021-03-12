@@ -1,4 +1,4 @@
-"""core.py - root module exports"""
+"""constants.py - module constants"""
 
 
 from pathlib import Path
