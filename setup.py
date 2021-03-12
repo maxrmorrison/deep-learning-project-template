@@ -8,11 +8,11 @@ with open('README.md') as file:
 # TODO - replace with details of your project
 setup(
     name='NAME',
-    description='',
+    description='DESCRIPTION',
     version='0.0.1',
-    author='Max Morrison',
-    author_email='maxrmorrison@gmail.com',
-    url='https://github.com/maxrmorrison/NAME',
+    author='AUTHOR',
+    author_email='EMAIL',
+    url='https://github.com/USERNAME/NAME',
     install_requires=['pytorch-lightning'],
     packages=['NAME'],
     package_data={'NAME': ['assets/*']},
