@@ -6,7 +6,8 @@ and `DATASET` is used to refer to the name of a dataset.
 
 ## Installation
 
-Clone this repo and run `cd NAME && pip install -e .`.
+Clone this repo. Change all instances of `NAME` to your project name.
+Then run `cd NAME && pip install -e .`.
 
 ## Usage
 
