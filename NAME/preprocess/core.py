@@ -26,20 +26,7 @@ def dataset(name):
     input_directory = NAME.DATA_DIR / name
     output_directory = NAME.CACHE_DIR / name
 
-    # TODO - Perform preprocessing.
-    #
-    #        Note that you will need to preprocess a single example in
-    #        infer.py. It is recommended to design your code accordingly (e.g.,
-    #        with a from_file() function that loads, preprocesses, and returns
-    #        preprocessed features).
-    #
-    #        If your preprocessing task is suitable for multiprocessing, also
-    #        implement that here (e.g., with multiprocessing.Pool).
-    #
-    #        If your preprocessing takes a long time, consider adding
-    #        monitoring via tqdm. Note that monitoring a multithreaded job
-    #        requires additional steps (see
-    #        https://stackoverflow.com/questions/41920124/multiprocessing-use-tqdm-to-display-a-progress-bar).
+    # TODO - Perform preprocessing
     raise NotImplementedError
 
 
@@ -52,8 +39,8 @@ def DATASET_inputs():
     """Get a list of preprocessing inputs
 
     Returns
-        inputs - list
-            The files and metadata needed to preprocess each item in the
+        inputs - list(tuple)
+            Filenames and any metadata needed to preprocess each item in the
             dataset. The exact type of each element is project-specific.
             For image classification, inputs is a list of filenames of images
             to preprocess. For text-to-speech, inputs is a pair of filenames
