@@ -1,6 +1,8 @@
 """data.py - data loading"""
 
 
+import abc
+import itertools
 import json
 import os
 
@@ -122,67 +124,263 @@ def collate_fn(batch):
 
 
 ###############################################################################
-# File organization
+# Base dataset metadata
 ###############################################################################
 
 
-def partitions(name):
-    """Retrieve the data partitions for a dataset
+class Metadata(abc.ABC):
+    """Abstract base class for dataset metadata"""
 
-    Arguments
-        name - string
-            The dataset name
+    ###########################################################################
+    # File access
+    ###########################################################################
 
-    Returns
-        partitions - dict(string, list(string))
-            The dataset partitions. The key is the partition name and the
-            value is the list of stems belonging to that partition.
-    """
-    if not hasattr(partitions, name):
-        with open(NAME.ASSETS_DIR / name / 'partition.json') as file:
-            setattr(partitions, name, json.load(file))
-    return getattr(partitions, name)
+    @classmethod
+    def files(cls, directory, partition=None):
+        """Retrieve filenames in a dataset
+
+        Arguments
+            directory - Path
+                The root directory of the dataset
+            partition - string or None
+                Returns files within a partition. If None, returns all files.
+
+        Returns
+            files - list(Path)
+                The files in the dataset
+        """
+        # Get stems
+        stems = cls.stems(partition)
+
+        # Convert to files
+        return [cls.stem_to_file(directory, stem) for stem in stems]
+
+    @classmethod
+    def partition_file(cls):
+        """Retrieve the name of the partition file
+
+        Returns
+            file - Path
+                The partition file
+        """
+        return NAME.ASSETS_DIR / 'partition' / f'{cls.name}.json'
+
+    @classmethod
+    def partitions(cls):
+        """Get split of stems into partitions
+
+        Returns
+            partitions - dict(string, list(string))
+                The dictionary of partition names and corresponding stems
+        """
+        with open(cls.partition_file()) as file:
+            return json.load(file)
+
+    @classmethod
+    def stems(cls, partition=None):
+        """Retrieve the stems in a dataset
+
+        Arguments
+            partition - string or None
+                Returns stems within a partition. If None, returns all stems.
+
+        Returns
+            stems - list(string)
+                The stems in the dataset
+        """
+        # Get partitions
+        partitions = cls.partitions()
+
+        # Return all stems
+        if partition is None:
+            return itertools.chain(*partitions.values())
+
+        # Return stems of a given partition
+        return partitions[partition]
+
+    ###########################################################################
+    # Conversions
+    ###########################################################################
+
+    @staticmethod
+    @abc.abstractmethod
+    def file_to_stem(file):
+        """Convert file to stem"""
+        pass
+
+    @staticmethod
+    @abc.abstractmethod
+    def stem_to_file(directory, stem):
+        """Convert stem to file"""
+        pass
 
 
-def stem_to_file(name, stem):
-    """Resolve stem to a file in the dataset
+###############################################################################
+# Derived dataset metadata
+###############################################################################
+
+
+# TODO - create a Metadata class for each dataset
+class DATASETMetadata(Metadata):
+
+    name = 'DATASET'
+
+    @staticmethod
+    def file_to_stem(file):
+        """Convert file to stem
+
+        Arguments
+            file - Path
+                The file to convert
+
+        Returns
+            stem - string
+                The corresponding stem
+        """
+        # TODO - define the conversion from a filename to a stem
+        raise NotImplementedError
+
+    @staticmethod
+    def stem_to_file(directory, stem):
+        """Convert stem to file
+
+        Arguments
+            directory - Path
+                The root directory of the dataset
+            stem - string
+                The stem to convert
+
+        Returns
+            file - Path
+                The corresponding file
+        """
+        # TODO - define the conversion from a stem to a filename
+        raise NotImplementedError
+
+
+###############################################################################
+# Functional metadata interface - file access
+###############################################################################
+
+
+def files(name, directory, partition=None):
+    """Retrieve filenames in a dataset
 
     Arguments
         name - string
             The name of the dataset
+        directory - Path
+            The root directory of the dataset
+        partition - string or None
+            Returns files within a partition. If None, returns all files.
+
+    Returns
+        files - list(Path)
+            The files in the dataset
+    """
+    return metadata(name).files(directory, partition)
+
+
+def partition_file(name):
+    """Retrieve the name of the partition file
+
+    Arguments
+        name - string
+            The name of the dataset
+
+    Returns
+        file - Path
+            The partition file
+    """
+    return metadata(name).partition_file()
+
+
+def partitions(name):
+    """Get split of stems into partitions
+
+    Arguments
+        name - string
+            The name of the dataset
+
+    Returns
+        partitions - dict(string, list(string))
+            The dictionary of partition names and corresponding stems
+    """
+    return metadata(name).partitions()
+
+
+def stems(name, partition=None):
+    """Retrieve the stems in a dataset
+
+    Arguments
+        name - string
+            The name of the dataset
+        partition - string or None
+            Returns stems within a partition. If None, returns all stems.
+
+    Returns
+        stems - list(string)
+            The stems in the dataset
+    """
+    return metadata(name).stems(partition)
+
+
+###############################################################################
+# Functional metadata interface - conversions
+###############################################################################
+
+
+def file_to_stem(name, file):
+    """Convert file to stem
+
+    Arguments
+        name - string
+            The name of the dataset
+        file - Path
+            The file to convert
+
+    Returns
         stem - string
-            The stem representing one item in the dataset
+            The corresponding stem
+    """
+    return metadata(name).file_to_stem(file)
+
+
+def stem_to_file(name, directory, stem):
+    """Convert stem to file
+
+    Arguments
+        name - string
+            The name of the dataset
+        directory - Path
+            The root directory of the dataset
+        stem - string
+            The stem to convert
 
     Returns
         file - Path
             The corresponding file
     """
-    directory = NAME.DATA_DIR / name
+    return metadata(name).stem_to_file(directory, stem)
 
-    # TODO - replace with your datasets
-    if name == 'DATASET':
-        return DATASET_stem_to_file(directory, stem)
 
-    raise ValueError(f'Dataset {name} is not implemented')
-
-    
 ###############################################################################
 # Utilities
 ###############################################################################
 
 
-def DATASET_stem_to_file(directory, stem):
-    """Resolve stem to a file in DATASET
+def metadata(name):
+    """Get the metadata for the dataset
 
     Arguments
-        directory - Path
-            The root directory of the dataset
-        stem - string
-            The stem representing one item in the dataset
+        name - string
+            The name of the dataset
 
     Returns
-        file - Path
-            The corresponding file
+        metadata - Metadata
+            The dataset metadata
     """
-    # TODO
-    raise NotImplementedError
+    # TODO - replace with your datasets
+    if name == 'DATASET':
+        return DATASETMetadata
+    raise ValueError(f'Dataset {name} is not defined')

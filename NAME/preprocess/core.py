@@ -1,7 +1,5 @@
-"""preprocess.py - data preprocessing"""
+"""core.py - data preprocessing"""
 
-
-import argparse
 
 import NAME
 
@@ -59,26 +57,7 @@ def DATASET_inputs():
             dataset. The exact type of each element is project-specific.
             For image classification, inputs is a list of filenames of images
             to preprocess. For text-to-speech, inputs is a pair of filenames
-            (the text file and speech file). All datasets within a project
-            should use the same type for each element.
+            (the text file and speech file).
     """
     # TODO
     raise NotImplementedError
-
-
-###############################################################################
-# Entry point
-###############################################################################
-
-
-def parse_args():
-    """Parse command-line arguments"""
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        'dataset',
-        help='The name of the dataset to preprocess')
-    return parser.parse_args()
-
-
-if __name__ == '__main__':
-    dataset(**vars(parse_args()))

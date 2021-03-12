@@ -23,7 +23,7 @@ DATASET`.
 
 ### Preprocess data
 
-Complete all TODOs in `preprocess.py`, then run `python -m NAME.preprocess
+Complete all TODOs in `preprocess/core.py`, then run `python -m NAME.preprocess
 DATASET`. All preprocessed data is saved in `cache/DATASET`.
 
 
@@ -38,15 +38,15 @@ for additional arguments.
 
 ### Evaluate
 
-Complete all TODOs in `evaluate.py`, then run `python -m NAME.evaluate DATASET
-<partition> <checkpoint> <file>`, where `<partition>` is the name of the
-partition to evaluate, `<checkpoint>` is the checkpoint file to evaluate, and
-`<file>` is the json file to write results to.
+Complete all TODOs in `evaluate/core.py`, then run `python -m NAME.evaluate
+DATASET <partition> <checkpoint> <file>`, where `<partition>` is the name of
+the partition to evaluate, `<checkpoint>` is the checkpoint file to evaluate,
+and `<file>` is the json file to write results to.
 
 
 ### Infer
 
-Complete all TODOs in `infer.py`, then run `python -m NAME.infer
+Complete all TODOs in `infer/core.py`, then run `python -m NAME.infer
 <input_file> <output_file> <checkpoint_file>`.
 
 
@@ -81,24 +81,11 @@ general, only small files that are essential at runtime should be placed in
 this folder.
 
 
-### What if I have an especially complex preprocessing pipeline?
-
-I recommend one of two designs.
-1. Replace `preprocess.py` with a `preprocess` submodule. This will
-be a directory `NAME/preprocess` that contains a module initialization script
-`__init__.py`, an entry point `__main__.py`, and the rest of your preprocessing
-code.
-2. Implement only the entry point in `preprocess.py`. Move the data
-transformations to either a new file `transform.py` or new `transform`
-submodule.
-
-
 ### What if my evaluation includes subjective experiments?
 
 In this case, replace the `<file>` argument of `NAME.evaluate` with a
 directory. Write any objective metrics to a file within this directory, as well
-as any generated files that will be subjectively evaluated. If evaluation
-is especially complex, consider making an `evaluate` submodule.
+as any generated files that will be subjectively evaluated.
 
 
 ### How do I release my code so that it can be downloaded via pip?
