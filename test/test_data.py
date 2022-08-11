@@ -15,17 +15,3 @@ def test_dataset(dataset):
 
     # TODO - check that the shape of the output of __getitem__ is as expected
     raise NotImplementedError
-
-
-def test_datamodule(datamodule):
-    """Shape test for the datamodule loader
-
-    Arguments
-        datamodule - PyTorch Lightning DataModule
-            The datamodule to test
-    """
-    # Load a batch from the dataloader
-    batch = next(datamodule.val_dataloader())
-
-    # TODO - check that the shape of the batch is as expected
-    raise NotImplementedError

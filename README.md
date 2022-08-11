@@ -13,47 +13,36 @@ Then run `cd NAME && pip install -e .`.
 
 ### Download data
 
-Place datasets in `data/DATASET`, where `DATASET` is the name of the dataset.
+Place datasets in `data/datasets/DATASET`, where `DATASET` is the name of the dataset.
 
 
 ### Partition data
 
-Complete all TODOs in `partition.py`, then run `python -m NAME.partition
+Complete all TODOs in `partition/`, then run `python -m NAME.partition
 DATASET`.
 
 
 ### Preprocess data
 
-Complete all TODOs in `preprocess/core.py`, then run `python -m NAME.preprocess
-DATASET`. All preprocessed data is saved in `cache/DATASET`.
+Complete all TODOs in `preprocess/`, then run `python -m NAME.preprocess
+DATASET`. All preprocessed data is saved in `data/cache/DATASET`.
 
 
 ### Train
 
-Complete all TODOs in `data.py` and `model.py`. Then, create a directory in
-`runs` for your experiment. Logs, checkpoints, and results should be saved to
-this directory. In your new directory, run `python -m NAME.train --dataset
-DATASET <args>`. See the [PyTorch Lightning trainer flags](https://pytorch-lightning.readthedocs.io/en/stable/trainer.html#trainer-flags)
-for additional arguments.
+Complete all TODOs in `data/` and `model.py`, then run `python -m NAME.train --config <config> --dataset
+DATASET --gpus <gpus>`.
 
 
 ### Evaluate
 
-Complete all TODOs in `evaluate/core.py`, then run `python -m NAME.evaluate
-DATASET <partition> <checkpoint> <file>`, where `<partition>` is the name of
-the partition to evaluate, `<checkpoint>` is the checkpoint file to evaluate,
-and `<file>` is the json file to write results to.
-
-
-### Infer
-
-Complete all TODOs in `infer/core.py`, then run `python -m NAME.infer
-<input_file> <output_file> <checkpoint_file>`.
+Complete all TODOs in `evaluate/`, then run `python -m NAME.evaluate
+--datasets <datasets> --checkpoint <checkpoint> --gpu <gpu>`.
 
 
 ### Monitor
 
-Run `tensorboard --logdir runs/<run>/logs`. If you are running training
+Run `tensorboard --logdir runs/`. If you are running training
 remotely, you must create a SSH connection with port forwarding to view
 Tensorboard. This can be done with `ssh -L 6006:localhost:6006
 <user>@<server-ip-address>`. Then, open `localhost:6006` in your browser.

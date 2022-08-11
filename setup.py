@@ -13,7 +13,7 @@ setup(
     author='AUTHOR',
     author_email='EMAIL',
     url='https://github.com/USERNAME/NAME',
-    install_requires=['pytorch-lightning'],
+    install_requires=['torch', 'yapecs'],
     packages=['NAME'],
     package_data={'NAME': ['assets/*']},
     long_description=long_description,
