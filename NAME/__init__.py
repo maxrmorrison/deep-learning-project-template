@@ -4,8 +4,6 @@
 
 
 # Default configuration parameters to be modified
-from .config.static import *
-from .config.defaults import *
 from .config import defaults
 
 # Modify configuration
