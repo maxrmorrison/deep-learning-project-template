@@ -190,7 +190,7 @@ def train(
             optimizer.zero_grad()
 
             # Backward pass
-            scaler.scale(generator_losses).backward()
+            scaler.scale(losses).backward()
 
             # Update weights
             scaler.step(optimizer)
