@@ -1,6 +1,6 @@
 import json
 
-import promovits
+import NAME
 
 
 ###############################################################################
@@ -9,5 +9,5 @@ import promovits
 
 def partition(dataset):
     """Load partitions for dataset"""
-    with open(promovits.PARTITION_DIR / f'{dataset}.json') as file:
+    with open(NAME.PARTITION_DIR / f'{dataset}.json') as file:
         return json.load(file)

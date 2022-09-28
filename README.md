@@ -13,7 +13,7 @@ Then run `cd NAME && pip install -e .`.
 
 ### Download data
 
-Place datasets in `data/datasets/DATASET`, where `DATASET` is the name of the dataset.
+Complete all TODOs in `data/download/`, then run `python -m NAME.download DATASET`.
 
 
 ### Partition data

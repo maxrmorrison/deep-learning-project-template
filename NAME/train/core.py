@@ -165,9 +165,8 @@ def train(
         model.train()
         for batch in train_loader:
 
-            # Unpack batch
+            # TODO - Unpack batch
             (
-                """ TODO - unpack batch"""
             ) = (item.to(device) for item in batch[1:])
 
             # Bundle training input
@@ -176,8 +175,8 @@ def train(
             with torch.cuda.amp.autocast():
 
                 # Forward pass
+                # TODO - unpack network output
                 (
-                    """ TODO - unpack network output"""
                 ) = model(*model_input)
 
                 # TODO - compute losses
