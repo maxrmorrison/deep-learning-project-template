@@ -159,9 +159,6 @@ def train(
             desc=f'Training {NAME.CONFIG}')
     while step < steps:
 
-        # Seed sampler
-        train_loader.batch_sampler.set_epoch(step // len(train_loader.dataset))
-
         model.train()
         for batch in train_loader:
 
