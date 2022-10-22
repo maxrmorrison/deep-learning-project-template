@@ -164,7 +164,7 @@ def train(
 
             # TODO - Unpack batch
             (
-            ) = (item.to(device) for item in batch[1:])
+            ) = (item.to(device) for item in batch)
 
             # Bundle training input
             model_input = (""" TODO - pack network input""")
