@@ -44,7 +44,7 @@ def run(
             log_directory,
             None if gpus is None else gpus[0])
 
-    # Return path to generator checkpoint
+    # Return path to model checkpoint
     return NAME.checkpoint.latest_path(output_directory)
 
 
@@ -217,7 +217,7 @@ def train(
                     evaluate(
                         log_directory,
                         step,
-                        generator,
+                        model,
                         valid_loader,
                         gpu)
 
@@ -274,7 +274,7 @@ def evaluate(directory, step, model, valid_loader, gpu):
         # TODO - evaluate
         pass
 
-    # Prepare generator for training
+    # Prepare model for training
     model.train()
 
 
