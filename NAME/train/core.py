@@ -107,7 +107,7 @@ def train(
 
     path = NAME.checkpoint.latest_path(
         checkpoint_directory,
-        '*.pt'),
+        '*.pt')
 
     # For some reason, returning None from latest_path returns (None,)
     path = None if path == (None,) else path
