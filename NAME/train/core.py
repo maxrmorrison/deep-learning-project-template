@@ -109,21 +109,10 @@ def train(
         checkpoint_directory,
         '*.pt')
 
-    # For some reason, returning None from latest_path returns (None,)
-    path = None if path == (None,) else path
-
     if path is not None:
 
         # Load model
-        (
-            model,
-            optimizer,
-            step
-        ) = NAME.checkpoint.load(
-            path[0],
-            model,
-            optimizer
-        )
+        model, optimizer, step = NAME.checkpoint.load(path, model, optimizer)
 
     else:
 
