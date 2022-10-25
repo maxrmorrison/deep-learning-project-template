@@ -17,5 +17,4 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == '__main__':
-    NAME.partition.datasets(**vars(parse_args()))
+NAME.partition.datasets(**vars(parse_args()))
