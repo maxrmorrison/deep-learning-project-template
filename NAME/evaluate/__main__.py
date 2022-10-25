@@ -31,5 +31,4 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == '__main__':
-    NAME.evaluate.datasets(**vars(parse_args()))
+NAME.evaluate.datasets(**vars(parse_args()))
