@@ -50,5 +50,4 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == '__main__':
-    main(**vars(parse_args()))
+main(**vars(parse_args()))
