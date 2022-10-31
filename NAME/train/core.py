@@ -158,7 +158,7 @@ def train(
             # Bundle training input
             model_input = (""" TODO - pack network input""")
 
-            with torch.autocast():
+            with torch.autocast(device.type):
 
                 # Forward pass
                 # TODO - unpack network output
