@@ -137,7 +137,7 @@ def train(
     scaler = torch.cuda.amp.GradScaler()
 
     # Get total number of steps
-    steps = NAME.NUM_STEPS
+    steps = NAME.STEPS
 
     # Setup progress bar
     if not rank:
@@ -158,7 +158,7 @@ def train(
             # Bundle training input
             model_input = (""" TODO - pack network input""")
 
-            with torch.cuda.amp.autocast():
+            with torch.autocast():
 
                 # Forward pass
                 # TODO - unpack network output

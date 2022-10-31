@@ -58,7 +58,7 @@ BATCH_SIZE = 64
 LEARNING_RATE_DECAY = .999875
 
 # Number of training steps
-NUM_STEPS = 300000
+STEPS = 300000
 
 # Number of data loading worker threads
 NUM_WORKERS = 2
