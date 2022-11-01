@@ -11,6 +11,18 @@ CONFIG = 'NAME'
 
 
 ###############################################################################
+# Data parameters
+###############################################################################
+
+
+# Names of all datasets
+DATASETS = []
+
+# Datasets for evaluation
+EVALUATION_DATASETS = DATASETS
+
+
+###############################################################################
 # Directories
 ###############################################################################
 
@@ -30,20 +42,23 @@ EVAL_DIR = Path(__file__).parent.parent.parent / 'eval'
 # Location to save training and adaptation artifacts
 RUNS_DIR = Path(__file__).parent.parent.parent / 'runs'
 
+# Location of compressed datasets on disk
+SOURCES_DIR = Path(__file__).parent.parent.parent / 'data' / 'sources'
+
 
 ###############################################################################
-# Logging parameters
+# Evaluation parameters
 ###############################################################################
 
 
-# Number of steps between saving checkpoints
-CHECKPOINT_INTERVAL = 25000  # steps
+# Whether to perform benchmarking
+BENCHMARK = False
 
-# Number of steps between logging to Tensorboard
-LOG_INTERVAL = 1000  # steps
+# Number of steps between tensorboard logging
+LOG_INTERVAL = 2500  # steps
 
-# Number of steps between evaluation
-EVALUATION_INTERVAL = 2500  # steps
+# Number of steps to perform for tensorboard logging
+LOG_STEPS = 16
 
 
 ###############################################################################
@@ -53,6 +68,9 @@ EVALUATION_INTERVAL = 2500  # steps
 
 # Batch size (per gpu)
 BATCH_SIZE = 64
+
+# Number of steps between saving checkpoints
+CHECKPOINT_INTERVAL = 25000  # steps
 
 # Per-epoch decay rate of the learning rate
 LEARNING_RATE_DECAY = .999875

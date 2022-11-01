@@ -4,24 +4,18 @@ import random
 import NAME
 
 
-def datasets(datasets, overwrite=False):
+def datasets(datasets=NAME.DATASETS):
     """Partition datasets"""
     for dataset in datasets:
-
-        # Check if partition already exists
-        file = NAME.PARTITION_DIR / f'{dataset}.json'
-        if file.exists():
-            if not overwrite:
-                print(f'Not overwriting existing partition {file}')
-                continue
 
         # Random seed
         random.seed(NAME.RANDOM_SEED)
 
-        # TODO - make partition
-        partition = None
+        # TODO - make partition dictionary
+        partition = {'train': [], 'valid': [], 'test': []}
 
         # Save to disk
+        file = NAME.PARTITION_DIR / f'{dataset}.json'
         file.parent.mkdir(exist_ok=True, parents=True)
         with open(file, 'w') as file:
-            json.dump(partition, file, ensure_ascii=False, indent=4)
+            json.dump(partition, file, indent=4)

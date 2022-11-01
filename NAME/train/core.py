@@ -3,7 +3,6 @@ import functools
 import os
 
 import torch
-import tqdm
 
 import NAME
 
@@ -14,7 +13,7 @@ import NAME
 
 
 def run(
-    dataset,
+    datasets,
     checkpoint_directory,
     output_directory,
     log_directory,
@@ -23,7 +22,7 @@ def run(
     # Distributed data parallelism
     if gpus and len(gpus) > 1:
         args = (
-            dataset,
+            datasets,
             checkpoint_directory,
             output_directory,
             log_directory,
@@ -38,7 +37,7 @@ def run(
 
         # Single GPU or CPU training
         train(
-            dataset,
+            datasets,
             checkpoint_directory,
             output_directory,
             log_directory,
@@ -54,7 +53,7 @@ def run(
 
 
 def train(
-    dataset,
+    datasets,
     checkpoint_directory,
     output_directory,
     log_directory,
@@ -74,7 +73,8 @@ def train(
     #######################
 
     torch.manual_seed(NAME.RANDOM_SEED)
-    train_loader, valid_loader = NAME.data.loaders(dataset, gpu)
+    train_loader = NAME.data.loader(datasets, 'train', gpu)
+    valid_loader = NAME.data.loader(datasets, 'valid', gpu)
 
     #################
     # Create models #
@@ -141,11 +141,10 @@ def train(
 
     # Setup progress bar
     if not rank:
-        progress = tqdm.tqdm(
-            initial=step,
-            total=steps,
-            dynamic_ncols=True,
-            desc=f'Training {NAME.CONFIG}')
+        progress = NAME.iterator(
+            range(step, steps),
+            f'Training {penne.CONFIG}',
+            steps)
     while step < steps:
 
         model.train()
@@ -189,26 +188,19 @@ def train(
 
             if not rank:
 
-                if step % NAME.LOG_INTERVAL == 0:
-
-                    # Log losses
-                    scalars = {
-                        'loss/total': losses,
-                        'learning_rate': optimizer.param_groups[0]['lr']}
-                    NAME.write.scalars(log_directory, step, scalars)
-
                 ############
                 # Evaluate #
                 ############
 
-                if step % NAME.EVALUATION_INTERVAL == 0:
-
-                    evaluate(
+                if step % NAME.LOG_INTERVAL == 0:
+                    evaluate_fn = functools.partial(
+                        evaluate,
                         log_directory,
                         step,
                         model,
-                        valid_loader,
                         gpu)
+                    evaluate_fn('train', train_loader)
+                    evaluate_fn('valid', valid_loader)
 
                 ###################
                 # Save checkpoint #
@@ -250,18 +242,27 @@ def train(
 ###############################################################################
 
 
-def evaluate(directory, step, model, valid_loader, gpu):
+def evaluate(directory, step, model, gpu, condition, loader):
     """Perform model evaluation"""
-    device = 'cpu' if gpu is None else f'cuda:{gpu}'
+    device = torch.device('cpu' if gpu is None else f'cuda:{gpu}')
 
-    # Prepare model for evaluation
-    model.eval()
+    # Prepare model for inference
+    with NAME.inference_context(model, device.type) as model:
 
-    # Turn off gradient computation
-    with torch.no_grad():
+        for i, batch in enumerate(loader):
 
-        # TODO - evaluate
-        pass
+            # TODO - unpack batch
+            () = batch
+
+            # TODO - send to device and forward pass
+
+            # TODO - update metrics
+
+            # Stop when we exceed some number of batches
+            if i + 1 == NAME.LOG_STEPS:
+                break
+
+    # TODO - write to tensorboard
 
     # Prepare model for training
     model.train()

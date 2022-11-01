@@ -13,8 +13,8 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Download datasets')
     parser.add_argument(
         '--datasets',
+        default=NAME.DATASETS,
         nargs='+',
-        required=True,
         help='The datasets to download')
     return parser.parse_args()
 

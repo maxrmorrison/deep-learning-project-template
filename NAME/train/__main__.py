@@ -10,7 +10,7 @@ import NAME
 ###############################################################################
 
 
-def main(config, dataset, gpus=None):
+def main(config, datasets, gpus=None):
     # Create output directory
     directory = NAME.RUNS_DIR / config.stem
     directory.mkdir(parents=True, exist_ok=True)
@@ -20,14 +20,14 @@ def main(config, dataset, gpus=None):
 
     # Train
     NAME.train.run(
-        dataset,
+        datasets,
         directory,
         directory,
         directory,
         gpus)
 
     # Evaluate
-    NAME.evaluate.datasets([dataset], directory, gpus)
+    NAME.evaluate.datasets(datasets, directory, gpus)
 
 
 def parse_args():
@@ -39,14 +39,15 @@ def parse_args():
         default=NAME.DEFAULT_CONFIGURATION,
         help='The configuration file')
     parser.add_argument(
-        '--dataset',
-        default='vctk',
-        help='The dataset to train on')
+        '--datasets',
+        default=NAME.DATASETS,
+        nargs='+',
+        help='The datasets to train on')
     parser.add_argument(
         '--gpus',
         type=int,
         nargs='+',
-        help='The gpus to run training on')
+        help='The indices of the gpus to run training on')
     return parser.parse_args()
 
 

@@ -1,6 +1,3 @@
-"""core.py - data preprocessing"""
-
-
 import NAME
 
 

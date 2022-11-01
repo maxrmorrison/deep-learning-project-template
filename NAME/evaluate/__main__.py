@@ -1,6 +1,3 @@
-"""__main__.py - entry point for NAME.evaluate"""
-
-
 import argparse
 from pathlib import Path
 
@@ -17,11 +14,13 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--datasets',
+        default=NAME.EVALUATION_DATASETS,
+        nargs='+',
         help='The datasets to evaluate')
     parser.add_argument(
         '--checkpoint',
-        type=Path,
         default=NAME.DEFAULT_CHECKPOINT,
+        type=Path,
         help='The checkpoint file to evaluate')
     parser.add_argument(
         '--gpu',

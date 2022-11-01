@@ -1,6 +1,3 @@
-"""__main__.py - entry point for NAME.preprocess"""
-
-
 import argparse
 
 import NAME
@@ -15,9 +12,10 @@ def parse_args():
     """Parse command-line arguments"""
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        'datasets',
+        '--datasets',
+        default=NAME.DATASETS,
         nargs='+',
-        help='The name of the datasets to preprocess')
+        help='The names of the datasets to preprocess')
     return parser.parse_args()
 
 

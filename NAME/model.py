@@ -1,6 +1,3 @@
-"""model.py - model definition"""
-
-
 import torch
 
 
@@ -18,10 +15,6 @@ class Model(torch.nn.Module):
 
         # TODO - define model
         raise NotImplementedError
-
-    ###########################################################################
-    # Forward pass
-    ###########################################################################
 
     def forward(self):
         """Perform model inference"""

@@ -8,6 +8,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description='Partition datasets')
     parser.add_argument(
         '--datasets',
+        default=NAME.DATASETS,
         nargs='+',
         help='The datasets to partition')
     parser.add_argument(
