@@ -82,15 +82,6 @@ def train(
 
     model = NAME.model.Model().to(device)
 
-    ##################################################
-    # Maybe setup distributed data parallelism (DDP) #
-    ##################################################
-
-    if rank is not None:
-        model = torch.nn.parallel.DistributedDataParallel(
-            model,
-            device_ids=[rank])
-
     ####################
     # Create optimizer #
     ####################
@@ -118,6 +109,15 @@ def train(
 
         # Train from scratch
         step = 0
+
+    ##################################################
+    # Maybe setup distributed data parallelism (DDP) #
+    ##################################################
+
+    if rank is not None:
+        model = torch.nn.parallel.DistributedDataParallel(
+            model,
+            device_ids=[rank])
 
     #####################
     # Create schedulers #
