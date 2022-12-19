@@ -8,7 +8,7 @@ from .config import defaults
 
 # Modify configuration
 import yapecs
-yapecs.configure(defaults)
+yapecs.configure('NAME', defaults)
 
 # Import configuration parameters
 from .config.defaults import *
