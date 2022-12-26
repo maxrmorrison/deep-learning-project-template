@@ -72,13 +72,6 @@ general, only small files that are essential at runtime should be placed in
 this folder.
 
 
-### What if my evaluation includes subjective experiments?
-
-In this case, replace the `<file>` argument of `NAME.evaluate` with a
-directory. Write any objective metrics to a file within this directory, as well
-as any generated files that will be subjectively evaluated.
-
-
 ### How do I release my code so that it can be downloaded via pip?
 
 Code release involves making sure that `setup.py` is up-to-date and then
