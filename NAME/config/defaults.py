@@ -72,9 +72,6 @@ BATCH_SIZE = 64
 # Number of steps between saving checkpoints
 CHECKPOINT_INTERVAL = 25000  # steps
 
-# Per-epoch decay rate of the learning rate
-LEARNING_RATE_DECAY = .999875
-
 # Number of training steps
 STEPS = 300000
 
