@@ -1,9 +1,9 @@
 <h1 align="center">Deep learning project template</h1>
 <div align="center">
 
-[![PyPI](https://img.shields.io/pypi/v/NAME.svg)](https://pypi.python.org/pypi/NAME)
+<!-- [![PyPI](https://img.shields.io/pypi/v/NAME.svg)](https://pypi.python.org/pypi/NAME) -->
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Downloads](https://pepy.tech/badge/NAME)](https://pepy.tech/project/NAME)
+<!-- [![Downloads](https://pepy.tech/badge/NAME)](https://pepy.tech/project/NAME) -->
 
 </div>
 
