@@ -11,37 +11,33 @@ import tqdm
 
 
 @contextlib.contextmanager
-def chdir(directory):
-    """Context manager for changing the current working directory"""
-    curr_dir = os.getcwd()
-    try:
-        os.chdir(directory)
-        yield
-    finally:
-        os.chdir(curr_dir)
+def inference_context(model):
+    device_type = next(model.parameters()).device.type
 
-
-@contextlib.contextmanager
-def inference_context(model, device_type):
     # Prepare model for evaluation
     model.eval()
 
     # Turn off gradient computation
     with torch.no_grad():
 
-        # Automatic mixed precision
-        with torch.autocast(device_type):
+        # Automatic mixed precision on GPU
+        if device_type == 'cuda':
+            with torch.autocast(device_type):
+                yield
 
-            yield model
+        else:
+            yield
 
     # Prepare model for training
     model.train()
 
 
-def iterator(iterable, message, total=None):
+def iterator(iterable, message, initial=0, total=None):
     """Create a tqdm iterator"""
+    total = len(iterable) if total is None else total
     return tqdm.tqdm(
         iterable,
         desc=message,
         dynamic_ncols=True,
-        total=len(iterable) if total is None else total)
+        initial=initial,
+        total=total)

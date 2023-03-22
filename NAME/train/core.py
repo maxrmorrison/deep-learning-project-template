@@ -48,7 +48,7 @@ def run(
 
 
 ###############################################################################
-# Training
+# Train
 ###############################################################################
 
 
@@ -80,25 +80,19 @@ def train(
     # Create models #
     #################
 
-    model = NAME.model.Model().to(device)
+    model = NAME.Model().to(device)
 
     ####################
     # Create optimizer #
     ####################
 
-    optimizer = torch.optim.AdamW(
-        model.parameters(),
-        lr=2e-4,
-        betas=[.80, .99],
-        eps=1e-9)
+    optimizer = torch.optim.Adam(model.parameters())
 
     ##############################
     # Maybe load from checkpoint #
     ##############################
 
-    path = NAME.checkpoint.latest_path(
-        checkpoint_directory,
-        '*.pt')
+    path = NAME.checkpoint.latest_path(checkpoint_directory)
 
     if path is not None:
 
@@ -119,16 +113,6 @@ def train(
             model,
             device_ids=[rank])
 
-    #####################
-    # Create schedulers #
-    #####################
-
-    scheduler_fn = functools.partial(
-        torch.optim.lr_scheduler.ExponentialLR,
-        gamma=NAME.LEARNING_RATE_DECAY,
-        last_epoch=step // len(train_loader.dataset) if step else -1)
-    scheduler = scheduler_fn(optimizer)
-
     #########
     # Train #
     #########
@@ -143,29 +127,28 @@ def train(
     if not rank:
         progress = NAME.iterator(
             range(step, steps),
-            f'Training {penne.CONFIG}',
+            f'Training {NAME.CONFIG}',
             steps)
     while step < steps:
 
-        model.train()
         for batch in train_loader:
 
             # TODO - Unpack batch
-            (
-            ) = (item.to(device) for item in batch)
+            () = batch
 
-            # Bundle training input
-            model_input = (""" TODO - pack network input""")
+            # TODO - copy to device
 
             with torch.autocast(device.type):
 
                 # Forward pass
-                # TODO - unpack network output
-                (
-                ) = model(*model_input)
+                () = model(
+                    # TODO - args
+                )
 
-                # TODO - compute losses
-                losses = 0.
+                # Compute loss
+                losses = loss(
+                    # TODO - args
+                )
 
             ######################
             # Optimize model #
@@ -213,28 +196,28 @@ def train(
                         step,
                         output_directory / f'{step:08d}.pt')
 
-            # Update training step count
             if step >= steps:
                 break
-            step += 1
 
-            # Update progress bar
             if not rank:
+
+                # Update progress bar
                 progress.update()
 
-        # Update learning rate every epoch
-        scheduler.step()
+                # Update training step count
+                step += 1
 
-    # Close progress bar
     if not rank:
+
+        # Close progress bar
         progress.close()
 
-    # Save final model
-    NAME.checkpoint.save(
-        model,
-        optimizer,
-        step,
-        output_directory / f'{step:08d}.pt')
+        # Save final model
+        NAME.checkpoint.save(
+            model,
+            optimizer,
+            step,
+            output_directory / f'{step:08d}.pt')
 
 
 ###############################################################################
@@ -246,26 +229,50 @@ def evaluate(directory, step, model, gpu, condition, loader):
     """Perform model evaluation"""
     device = torch.device('cpu' if gpu is None else f'cuda:{gpu}')
 
+    # Setup evaluation metrics
+    metrics = NAME.evaluate.Metrics()
+
     # Prepare model for inference
-    with NAME.inference_context(model, device.type) as model:
+    with NAME.inference_context(model) as model:
 
         for i, batch in enumerate(loader):
 
             # TODO - unpack batch
             () = batch
 
-            # TODO - send to device and forward pass
+            # TODO - send to device
 
-            # TODO - update metrics
+            # FOrward pass
+            () = model(
+                # TODO - args
+            )
+
+            # Update metrics
+            metrics.update(
+                # TODO - args
+            )
 
             # Stop when we exceed some number of batches
             if i + 1 == NAME.LOG_STEPS:
                 break
 
-    # TODO - write to tensorboard
+    # Format results
+    scalars = {
+        f'{key}/{condition}': value for key, value in metrics().items()}
 
-    # Prepare model for training
-    model.train()
+    # Write to tensorboard
+    penn.write.scalars(directory, step, scalars)
+
+
+###############################################################################
+# Loss function
+###############################################################################
+
+
+def loss():
+    """Compute loss function"""
+    # TODO
+    pass
 
 
 ###############################################################################
@@ -273,10 +280,21 @@ def evaluate(directory, step, model, gpu, condition, loader):
 ###############################################################################
 
 
-def train_ddp(rank, dataset, directory, gpus):
+def train_ddp(
+    rank,
+    dataset,
+    checkpoint_directory,
+    output_directory,
+    log_directory,
+    gpus):
     """Train with distributed data parallelism"""
     with ddp_context(rank, len(gpus)):
-        train(dataset, directory, gpus)
+        train(
+            dataset,
+            checkpoint_directory,
+            output_directory,
+            log_directory,
+            gpus[rank])
 
 
 @contextlib.contextmanager

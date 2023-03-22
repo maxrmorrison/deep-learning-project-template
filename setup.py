@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 
 with open('README.md') as file:
@@ -14,7 +14,7 @@ setup(
     author_email='EMAIL',
     url='https://github.com/USERNAME/NAME',
     install_requires=['tensorboard', 'torch', 'yapecs'],
-    packages=['NAME'],
+    packages=find_packages(),
     package_data={'NAME': ['assets/*', 'assets/*/*']},
     long_description=long_description,
     long_description_content_type='text/markdown',

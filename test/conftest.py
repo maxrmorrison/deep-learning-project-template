@@ -22,4 +22,4 @@ def dataset():
 @pytest.fixture(scope='session')
 def model():
     """Preload the model"""
-    return NAME.model.Model()
+    return NAME.Model()

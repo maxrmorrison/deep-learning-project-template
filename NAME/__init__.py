@@ -21,13 +21,12 @@ from .config.static import *
 
 
 from .core import *
+from .model import Model
 from . import checkpoint
 from . import data
 from . import evaluate
 from . import load
-from . import model
 from . import partition
-from . import preprocess
 from . import time
 from . import train
 from . import write
