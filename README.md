@@ -7,7 +7,6 @@
 
 </div>
 
-Throughout this template, NAME is used to refer to the name of the project and DATASET is used to refer to the name of a dataset.
 
 ## Table of contents
 
