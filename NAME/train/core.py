@@ -261,7 +261,7 @@ def evaluate(directory, step, model, gpu, condition, loader):
         f'{key}/{condition}': value for key, value in metrics().items()}
 
     # Write to tensorboard
-    penn.write.scalars(directory, step, scalars)
+    NAME.write.scalars(directory, step, scalars)
 
 
 ###############################################################################
@@ -269,7 +269,7 @@ def evaluate(directory, step, model, gpu, condition, loader):
 ###############################################################################
 
 
-def loss():
+def loss(logits, target):
     """Compute loss function"""
     # TODO
     pass

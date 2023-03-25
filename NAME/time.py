@@ -1,7 +1,7 @@
 import contextlib
 import time
 
-import penne
+import NAME
 
 
 ###############################################################################
@@ -44,11 +44,11 @@ class Context:
 def timer(name):
     """Wrapper to handle context changes of global timer"""
     # Don't continue if we aren't benchmarking
-    if not penne.BENCHMARK:
+    if not NAME.BENCHMARK:
         yield
         return
 
-    penne.TIMER.name = name
-    with penne.TIMER:
+    NAME.TIMER.name = name
+    with NAME.TIMER:
         yield
-    penne.TIMER.name = None
+    NAME.TIMER.name = None
