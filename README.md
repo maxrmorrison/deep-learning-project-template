@@ -35,8 +35,6 @@
 
 ## Inference
 
-### Force-align text and audio
-
 ```python
 import NAME
 
