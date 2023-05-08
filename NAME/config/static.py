@@ -23,4 +23,4 @@ DEFAULT_CONFIGURATION = NAME.ASSETS_DIR / 'configs' / 'NAME.py'
 
 
 # Timer for benchmarking generation
-TIMER = NAME.time.Context()
+# TIMER = NAME.time.Context()

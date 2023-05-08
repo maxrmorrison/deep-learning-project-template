@@ -12,6 +12,10 @@ yapecs.configure('NAME', defaults)
 
 # Import configuration parameters
 from .config.defaults import *
+try:
+    from .config.secrets import *
+except ImportError:
+    pass
 from .config.static import *
 
 

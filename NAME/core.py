@@ -1,6 +1,8 @@
 import contextlib
 import os
 
+import NAME
+
 import torch
 import tqdm
 
@@ -65,7 +67,7 @@ def from_file(
 
 def from_file_to_file(
     input_file,
-    output_file
+    output_file,
     checkpoint=NAME.DEFAULT_CHECKPOINT,
     gpu=None):
     """Process file and save to disk
