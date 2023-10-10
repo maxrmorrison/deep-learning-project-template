@@ -1,8 +1,10 @@
 import contextlib
-import os
 
 import torch
+import torchutil
 import tqdm
+
+import NAME
 
 
 ###############################################################################
@@ -32,7 +34,7 @@ def run(x, checkpoint=NAME.DEFAULT_CHECKPOINT, gpu=None):
     features = preprocess(x)
 
     # Infer
-    logits = process(features.to(device), checkpoint)
+    logits = infer(features.to(device), checkpoint)
 
     # Postprocess
     return postprocess(logits)
@@ -65,7 +67,7 @@ def from_file(
 
 def from_file_to_file(
     input_file,
-    output_file
+    output_file,
     checkpoint=NAME.DEFAULT_CHECKPOINT,
     gpu=None):
     """Process file and save to disk
@@ -121,7 +123,7 @@ def preprocess(x):
     return features
 
 
-def process(features, checkpoint=NAME.DEFAULT_CHECKPOINT):
+def infer(features, checkpoint=NAME.DEFAULT_CHECKPOINT):
     """Model forward pass"""
     # Maybe cache model
     if (
@@ -133,7 +135,7 @@ def process(features, checkpoint=NAME.DEFAULT_CHECKPOINT):
         model = NAME.Model()
 
         # Load from disk
-        infer.model, *_ = NAME.checkpoint.load(checkpoint, model)
+        infer.model, *_ = torchutil.checkpoint.load(checkpoint, model)
         infer.checkpoint = checkpoint
         infer.device = features.device
 
@@ -166,16 +168,9 @@ def inference_context(model):
     # Prepare model for evaluation
     model.eval()
 
-    # Turn off gradient computation
-    with torch.no_grad():
-
-        # Automatic mixed precision on GPU
-        if device_type == 'cuda':
-            with torch.autocast(device_type):
-                yield
-
-        else:
-            yield
+    # Turn off gradient computation; turn on mixed precision
+    with torch.inference_mode(), torch.autocast(device_type):
+        yield
 
     # Prepare model for training
     model.train()

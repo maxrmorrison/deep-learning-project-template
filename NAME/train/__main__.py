@@ -10,7 +10,8 @@ import NAME
 ###############################################################################
 
 
-def main(config, datasets, gpus=None):
+def main(config, dataset):
+    """Train from configuration"""
     # Create output directory
     directory = NAME.RUNS_DIR / config.stem
     directory.mkdir(parents=True, exist_ok=True)
@@ -19,15 +20,7 @@ def main(config, datasets, gpus=None):
     shutil.copyfile(config, directory / config.name)
 
     # Train
-    NAME.train.run(
-        datasets,
-        directory,
-        directory,
-        directory,
-        gpus)
-
-    # Evaluate
-    NAME.evaluate.datasets(datasets, directory, gpus)
+    NAME.train(dataset, directory)
 
 
 def parse_args():
@@ -43,11 +36,7 @@ def parse_args():
         default=NAME.DATASETS,
         nargs='+',
         help='The datasets to train on')
-    parser.add_argument(
-        '--gpus',
-        type=int,
-        nargs='+',
-        help='The indices of the gpus to run training on')
+
     return parser.parse_args()
 
 

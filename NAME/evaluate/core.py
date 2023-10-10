@@ -1,6 +1,7 @@
 import json
 
 import torch
+import torchutil
 
 import NAME
 
@@ -10,6 +11,7 @@ import NAME
 ###############################################################################
 
 
+@torchutil.notify.on_finish('evaluate')
 def datasets(
     datasets=NAME.EVALUATION_DATASETS,
     checkpoint=NAME.DEFAULT_CHECKPOINT,

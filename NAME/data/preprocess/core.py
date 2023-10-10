@@ -1,3 +1,5 @@
+import torchutil
+
 import NAME
 
 
@@ -6,6 +8,7 @@ import NAME
 ###############################################################################
 
 
+@torchutil.notify.on_finish('preprocess')
 def datasets(datasets):
     """Preprocess a dataset
 

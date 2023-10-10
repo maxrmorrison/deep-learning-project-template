@@ -3,48 +3,9 @@ import functools
 import os
 
 import torch
+import torchutil
 
 import NAME
-
-
-###############################################################################
-# Training interface
-###############################################################################
-
-
-def run(
-    datasets,
-    checkpoint_directory,
-    output_directory,
-    log_directory,
-    gpus=None):
-    """Run model training"""
-    # Distributed data parallelism
-    if gpus and len(gpus) > 1:
-        args = (
-            datasets,
-            checkpoint_directory,
-            output_directory,
-            log_directory,
-            gpus)
-        torch.multiprocessing.spawn(
-            train_ddp,
-            args=args,
-            nprocs=len(gpus),
-            join=True)
-
-    else:
-
-        # Single GPU or CPU training
-        train(
-            datasets,
-            checkpoint_directory,
-            output_directory,
-            log_directory,
-            None if gpus is None else gpus[0])
-
-    # Return path to model checkpoint
-    return NAME.checkpoint.latest_path(output_directory)
 
 
 ###############################################################################
@@ -52,35 +13,25 @@ def run(
 ###############################################################################
 
 
-def train(
-    datasets,
-    checkpoint_directory,
-    output_directory,
-    log_directory,
-    gpu=None):
+@torchutil.notify.on_finish('train')
+def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
     """Train a model"""
-    # Get DDP rank
-    if torch.distributed.is_initialized():
-        rank = torch.distributed.get_rank()
-    else:
-        rank = None
-
-    # Get torch device
-    device = torch.device('cpu' if gpu is None else f'cuda:{gpu}')
+    # Create output directory
+    directory.mkdir(parents=True, exist_ok=True)
 
     #######################
     # Create data loaders #
     #######################
 
     torch.manual_seed(NAME.RANDOM_SEED)
-    train_loader = NAME.data.loader(datasets, 'train', gpu)
-    valid_loader = NAME.data.loader(datasets, 'valid', gpu)
+    train_loader = NAME.data.loader(datasets, 'train')
+    valid_loader = NAME.data.loader(datasets, 'valid')
 
     #################
     # Create models #
     #################
 
-    model = NAME.Model().to(device)
+    model = NAME.Model()
 
     ####################
     # Create optimizer #
@@ -92,43 +43,46 @@ def train(
     # Maybe load from checkpoint #
     ##############################
 
-    path = NAME.checkpoint.latest_path(checkpoint_directory)
+    path = torchutil.checkpoint.latest_path(directory)
 
     if path is not None:
 
         # Load model
-        model, optimizer, step = NAME.checkpoint.load(path, model, optimizer)
+        model, optimizer, state = torchutil.checkpoint.load(
+            path,
+            model,
+            optimizer)
+        step = state['step']
 
     else:
 
         # Train from scratch
         step = 0
 
-    ##################################################
-    # Maybe setup distributed data parallelism (DDP) #
-    ##################################################
+    ####################
+    # Device placement #
+    ####################
 
-    if rank is not None:
-        model = torch.nn.parallel.DistributedDataParallel(
-            model,
-            device_ids=[rank])
+    import accelerate
+    accelerator = accelerate.Accelerator(mixed_precision='fp16')
+    model, optimizer, train_loader, valid_loader = accelerator.prepare(
+        model,
+        optimizer,
+        train_loader,
+        valid_loader)
 
     #########
     # Train #
     #########
 
-    # Automatic mixed precision (amp) gradient scaler
-    scaler = torch.cuda.amp.GradScaler()
-
     # Get total number of steps
     steps = NAME.STEPS
 
     # Setup progress bar
-    if not rank:
-        progress = NAME.iterator(
-            range(step, steps),
-            f'Training {NAME.CONFIG}',
-            steps)
+    progress = NAME.iterator(
+        range(step, steps),
+        f'Training {NAME.CONFIG}',
+        steps)
     while step < steps:
 
         for batch in train_loader:
@@ -136,88 +90,74 @@ def train(
             # TODO - Unpack batch
             () = batch
 
-            # TODO - copy to device
+            # Forward pass
+            () = model(
+                # TODO - args
+            )
 
-            with torch.autocast(device.type):
+            # Compute loss
+            losses = loss(
+                # TODO - args
+            )
 
-                # Forward pass
-                () = model(
-                    # TODO - args
-                )
-
-                # Compute loss
-                losses = loss(
-                    # TODO - args
-                )
-
-            ######################
+            ##################
             # Optimize model #
-            ######################
+            ##################
 
+            # Zero gradients
             optimizer.zero_grad()
 
             # Backward pass
-            scaler.scale(losses).backward()
+            losses.backward()
 
             # Update weights
-            scaler.step(optimizer)
+            optimizer.step()
 
-            # Update gradient scaler
-            scaler.update()
+            ############
+            # Evaluate #
+            ############
 
-            ###########
-            # Logging #
-            ###########
+            if step % NAME.LOG_INTERVAL == 0:
+                evaluate_fn = functools.partial(
+                    evaluate,
+                    directory,
+                    step,
+                    model.
+                    accelerator)
+                evaluate_fn('train', train_loader)
+                evaluate_fn('valid', valid_loader)
 
-            if not rank:
+            ###################
+            # Save checkpoint #
+            ###################
 
-                ############
-                # Evaluate #
-                ############
-
-                if step % NAME.LOG_INTERVAL == 0:
-                    evaluate_fn = functools.partial(
-                        evaluate,
-                        log_directory,
-                        step,
-                        model,
-                        gpu)
-                    evaluate_fn('train', train_loader)
-                    evaluate_fn('valid', valid_loader)
-
-                ###################
-                # Save checkpoint #
-                ###################
-
-                if step and step % NAME.CHECKPOINT_INTERVAL == 0:
-                    NAME.checkpoint.save(
-                        model,
-                        optimizer,
-                        step,
-                        output_directory / f'{step:08d}.pt')
+            if step and step % NAME.CHECKPOINT_INTERVAL == 0:
+                torchutil.checkpoint.save(
+                    directory / f'{step:08d}.pt',
+                    model,
+                    optimizer,
+                    accelerator=accelerator,
+                    step=step)
 
             if step >= steps:
                 break
 
-            if not rank:
+            # Update progress bar
+            progress.update()
 
-                # Update progress bar
-                progress.update()
+            # Update training step count
+            step += 1
 
-                # Update training step count
-                step += 1
+    # Close progress bar
+    progress.close()
 
-    if not rank:
-
-        # Close progress bar
-        progress.close()
-
-        # Save final model
-        NAME.checkpoint.save(
-            model,
-            optimizer,
-            step,
-            output_directory / f'{step:08d}.pt')
+    # Save final model
+    torchutil.checkpoint.save(
+        directory / f'{step:08d}.pt',
+        model,
+        optimizer,
+        accelerator=accelerator,
+        step=step)
 
 
 ###############################################################################
@@ -225,10 +165,8 @@ def train(
 ###############################################################################
 
 
-def evaluate(directory, step, model, gpu, condition, loader):
+def evaluate(directory, step, model, accelerator, condition, loader):
     """Perform model evaluation"""
-    device = torch.device('cpu' if gpu is None else f'cuda:{gpu}')
-
     # Setup evaluation metrics
     metrics = NAME.evaluate.Metrics()
 
@@ -240,9 +178,7 @@ def evaluate(directory, step, model, gpu, condition, loader):
             # TODO - unpack batch
             () = batch
 
-            # TODO - send to device
-
-            # FOrward pass
+            # Forward pass
             () = model(
                 # TODO - args
             )
@@ -261,7 +197,7 @@ def evaluate(directory, step, model, gpu, condition, loader):
         f'{key}/{condition}': value for key, value in metrics().items()}
 
     # Write to tensorboard
-    NAME.write.scalars(directory, step, scalars)
+    torchutil.tensorboard.update(directory, step, scalars=scalars)
 
 
 ###############################################################################
