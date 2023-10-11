@@ -75,16 +75,14 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
     # Train #
     #########
 
-    # Get total number of steps
-    steps = NAME.STEPS
-
     # Setup progress bar
     progress = NAME.iterator(
-        range(step, steps),
+        range(step, NAME.STEPS),
         f'Training {NAME.CONFIG}',
-        total=steps)
+        step,
+        NAME.STEPS)
 
-    while step < steps:
+    while step < NAME.STEPS:
 
         for batch in train_loader:
 
@@ -140,7 +138,7 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
                     accelerator=accelerator,
                     step=step)
 
-            if step >= steps:
+            if step >= NAME.STEPS:
                 break
 
             # Update progress bar
