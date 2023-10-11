@@ -13,7 +13,7 @@ import NAME
 ###############################################################################
 
 
-@torchutil.notify.on_finish('train')
+@torchutil.notify.on_return('train')
 def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
     """Train a model"""
     # Create output directory
@@ -82,7 +82,8 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
     progress = NAME.iterator(
         range(step, steps),
         f'Training {NAME.CONFIG}',
-        steps)
+        total=steps)
+
     while step < steps:
 
         for batch in train_loader:

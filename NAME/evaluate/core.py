@@ -11,7 +11,7 @@ import NAME
 ###############################################################################
 
 
-@torchutil.notify.on_finish('evaluate')
+@torchutil.notify.on_return('evaluate')
 def datasets(
     datasets=NAME.EVALUATION_DATASETS,
     checkpoint=NAME.DEFAULT_CHECKPOINT,

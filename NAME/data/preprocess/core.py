@@ -8,7 +8,7 @@ import NAME
 ###############################################################################
 
 
-@torchutil.notify.on_finish('preprocess')
+@torchutil.notify.on_return('preprocess')
 def datasets(datasets):
     """Preprocess a dataset
 
