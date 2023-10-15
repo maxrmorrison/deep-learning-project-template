@@ -11,4 +11,4 @@ python -m NAME.data.preprocess
 python -m NAME.partition
 
 # Train and evaluate
-python -m NAME.train --config config/config.py --gpus $1
+accelerate launch -m NAME.train --config config/config.py
