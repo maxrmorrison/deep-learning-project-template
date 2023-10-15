@@ -51,9 +51,6 @@ SOURCES_DIR = Path(__file__).parent.parent.parent / 'data' / 'sources'
 ###############################################################################
 
 
-# Whether to perform benchmarking
-BENCHMARK = False
-
 # Number of steps between tensorboard logging
 LOG_INTERVAL = 2500  # steps
 
