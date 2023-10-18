@@ -106,7 +106,11 @@ def from_files_to_files(
         gpu
             The GPU index
     """
-    for input_file, output_file in zip(input_files, output_files):
+    for input_file, output_file in NAME.iterator(
+        zip(input_files, output_files),
+        NAME.CONFIG,
+        total=len(input_files)
+    ):
         from_file_to_file(input_file, output_file, checkpoint, gpu)
 
 
