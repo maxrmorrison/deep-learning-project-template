@@ -2,6 +2,7 @@ import contextlib
 import functools
 import os
 
+import accelerate
 import torch
 import torchutil
 
@@ -63,7 +64,6 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
     # Device placement #
     ####################
 
-    import accelerate
     accelerator = accelerate.Accelerator(mixed_precision='fp16')
     model, optimizer, train_loader, valid_loader = accelerator.prepare(
         model,
@@ -208,48 +208,3 @@ def loss(logits, target):
     """Compute loss function"""
     # TODO
     pass
-
-
-###############################################################################
-# Distributed data parallelism
-###############################################################################
-
-
-def train_ddp(
-    rank,
-    dataset,
-    checkpoint_directory,
-    output_directory,
-    log_directory,
-    gpus):
-    """Train with distributed data parallelism"""
-    with ddp_context(rank, len(gpus)):
-        train(
-            dataset,
-            checkpoint_directory,
-            output_directory,
-            log_directory,
-            gpus[rank])
-
-
-@contextlib.contextmanager
-def ddp_context(rank, world_size):
-    """Context manager for distributed data parallelism"""
-    # Setup ddp
-    os.environ['MASTER_ADDR']='localhost'
-    os.environ['MASTER_PORT']='12355'
-    torch.distributed.init_process_group(
-        'nccl',
-        init_method='env://',
-        world_size=world_size,
-        rank=rank)
-
-    try:
-
-        # Execute user code
-        yield
-
-    finally:
-
-        # Close ddp
-        torch.distributed.destroy_process_group()
