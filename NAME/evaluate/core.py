@@ -37,13 +37,11 @@ def datasets(
         # Reset dataset metrics
         dataset_metrics.reset()
 
-        # Setup test dataset
-        iterator = NAME.iterator(
-            NAME.data.loader(dataset, 'test'),
-            f'Evaluating {NAME.CONFIG} on {dataset}')
-
         # Iterate over test set
-        for batch in iterator:
+        for batch in NAME.iterator(
+            NAME.data.loader(dataset, 'test'),
+            f'Evaluating {NAME.CONFIG} on {dataset}'
+        ):
 
             # Reset file metrics
             file_metrics.reset()
