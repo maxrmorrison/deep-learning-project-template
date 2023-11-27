@@ -116,13 +116,17 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
             # Evaluate #
             ############
 
-            if step % NAME.LOG_INTERVAL == 0:
+            if step % NAME.EVALUATION_INTERVAL == 0:
+                evaluation_steps = (
+                    None if step == NAME.STEPS
+                    else NAME.DEFAULT_EVALUATION_STEPS)
                 evaluate_fn = functools.partial(
                     evaluate,
                     directory,
                     step,
-                    model.
-                    accelerator)
+                    model,
+                    accelerator,
+                    evaluation_steps=evaluation_steps)
                 evaluate_fn('train', train_loader)
                 evaluate_fn('valid', valid_loader)
 
@@ -164,7 +168,15 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
 ###############################################################################
 
 
-def evaluate(directory, step, model, accelerator, condition, loader):
+def evaluate(
+    directory,
+    step,
+    model,
+    accelerator,
+    condition,
+    loader,
+    evaluation_steps=NAME.DEFAULT_EVALUATION_STEPS
+):
     """Perform model evaluation"""
     # Setup evaluation metrics
     metrics = NAME.evaluate.Metrics()
@@ -188,7 +200,10 @@ def evaluate(directory, step, model, accelerator, condition, loader):
             )
 
             # Stop when we exceed some number of batches
-            if i + 1 == NAME.LOG_STEPS:
+            if (
+                NAME.DEFAULT_EVALUATION_STEPS is not None and
+                i + 1 == NAME.DEFAULT_EVALUATION_STEPS
+            ):
                 break
 
     # Format results

@@ -52,10 +52,10 @@ SOURCES_DIR = Path(__file__).parent.parent.parent / 'data' / 'sources'
 
 
 # Number of steps between tensorboard logging
-LOG_INTERVAL = 2500  # steps
+EVALUATION_INTERVAL = 2500  # steps
 
 # Number of steps to perform for tensorboard logging
-LOG_STEPS = 16
+DEFAULT_EVALUATION_STEPS = 16
 
 
 ###############################################################################
