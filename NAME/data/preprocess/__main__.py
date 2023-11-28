@@ -1,4 +1,4 @@
-import argparse
+import yapecs
 
 import NAME
 
@@ -10,7 +10,7 @@ import NAME
 
 def parse_args():
     """Parse command-line arguments"""
-    parser = argparse.ArgumentParser()
+    parser = yapecs.ArgumentParser()
     parser.add_argument(
         '--datasets',
         default=NAME.DATASETS,
