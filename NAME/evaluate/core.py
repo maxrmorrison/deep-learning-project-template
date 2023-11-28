@@ -11,7 +11,7 @@ import NAME
 ###############################################################################
 
 
-@torchutil.notify.on_return('evaluate')
+@torchutil.notify('evaluate')
 def datasets(
     datasets=NAME.EVALUATION_DATASETS,
     checkpoint=NAME.DEFAULT_CHECKPOINT,
@@ -38,7 +38,7 @@ def datasets(
         dataset_metrics.reset()
 
         # Iterate over test set
-        for batch in NAME.iterator(
+        for batch in torchutil.iterator(
             NAME.data.loader(dataset, 'test'),
             f'Evaluating {NAME.CONFIG} on {dataset}'
         ):

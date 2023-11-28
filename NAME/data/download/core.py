@@ -8,7 +8,7 @@ import NAME
 ###############################################################################
 
 
-@torchutil.notify.on_return('download')
+@torchutil.notify('download')
 def datasets(datasets=NAME.DATASETS):
     """Download datasets"""
     # TODO - download datasets

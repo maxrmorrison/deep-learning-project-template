@@ -2,7 +2,6 @@ import contextlib
 
 import torch
 import torchutil
-import tqdm
 
 import NAME
 
@@ -106,7 +105,7 @@ def from_files_to_files(
         gpu
             The GPU index
     """
-    for input_file, output_file in NAME.iterator(
+    for input_file, output_file in torchutil.iterator(
         zip(input_files, output_files),
         NAME.CONFIG,
         total=len(input_files)
@@ -178,14 +177,3 @@ def inference_context(model):
 
     # Prepare model for training
     model.train()
-
-
-def iterator(iterable, message, initial=0, total=None):
-    """Create a tqdm iterator"""
-    total = len(iterable) if total is None else total
-    return tqdm.tqdm(
-        iterable,
-        desc=message,
-        dynamic_ncols=True,
-        initial=initial,
-        total=total)

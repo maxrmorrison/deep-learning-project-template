@@ -1,4 +1,4 @@
-import torch
+import torchutil
 
 import NAME
 
@@ -32,18 +32,7 @@ class Metrics:
 ###############################################################################
 
 
-class Loss():
-
-    def __init__(self):
-        self.reset()
-
-    def __call__(self):
-        return {'loss': (self.total / self.count).item()}
-
-    def update(self, logits, target):
-        self.total += NAME.train.loss(logits, target)
-        self.count += target.shape[0]
-
-    def reset(self):
-        self.count = 0
-        self.total = 0.
+class Loss(torchutil.metrics.Average):
+    """Batch-updating loss"""
+    def update(self, predicted, target):
+        super().update(NAME.loss(predicted, target), target.numel())

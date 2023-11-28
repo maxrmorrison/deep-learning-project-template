@@ -14,7 +14,7 @@ import NAME
 ###############################################################################
 
 
-@torchutil.notify.on_return('train')
+@torchutil.notify('train')
 def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
     """Train a model"""
     # Create output directory
@@ -53,12 +53,12 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
             path,
             model,
             optimizer)
-        step = state['step']
+        step, epoch = state['step'], state['epoch']
 
     else:
 
         # Train from scratch
-        step = 0
+        step, epoch = 0, 0
 
     ####################
     # Device placement #
@@ -76,7 +76,7 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
     #########
 
     # Setup progress bar
-    progress = NAME.iterator(
+    progress = torchutil.iterator(
         range(step, NAME.STEPS),
         f'Training {NAME.CONFIG}',
         step,
@@ -140,7 +140,8 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
                     model,
                     optimizer,
                     accelerator=accelerator,
-                    step=step)
+                    step=step,
+                    epoch=epoch)
 
             if step >= NAME.STEPS:
                 break
@@ -151,6 +152,9 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
             # Update training step count
             step += 1
 
+        # Update epoch
+        epoch += 1
+
     # Close progress bar
     progress.close()
 
@@ -160,7 +164,8 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
         model,
         optimizer,
         accelerator=accelerator,
-        step=step)
+        step=step,
+        epoch=epoch)
 
 
 ###############################################################################
@@ -182,7 +187,7 @@ def evaluate(
     metrics = NAME.evaluate.Metrics()
 
     # Prepare model for inference
-    with NAME.inference_context(model) as model:
+    with NAME.inference_context(model):
 
         for i, batch in enumerate(loader):
 
