@@ -1,8 +1,7 @@
-import contextlib
 import functools
-import os
 
 import accelerate
+import GPUtil
 import torch
 import torchutil
 
@@ -143,8 +142,21 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
                     step=step,
                     epoch=epoch)
 
+            #########################
+            # Termination criterion #
+            #########################
+
+            # Finished training
             if step >= NAME.STEPS:
                 break
+
+            # Raise if GPU tempurature exceeds 80 C
+            if any(gpu.temperature > 80. for gpu in GPUtil.getGPUs()):
+                raise RuntimeError(f'GPU is overheating. Terminating training.')
+
+            ###########
+            # Updates #
+            ###########
 
             # Update progress bar
             progress.update()

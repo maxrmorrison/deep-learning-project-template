@@ -13,7 +13,7 @@ setup(
     author='AUTHOR',
     author_email='EMAIL',
     url='https://github.com/USERNAME/NAME',
-    install_requires=['accelerate', 'torch', 'torchutil', 'yapecs'],
+    install_requires=['accelerate', 'GPUtil', 'torch', 'torchutil', 'yapecs'],
     packages=find_packages(),
     package_data={'NAME': ['assets/*', 'assets/*/*']},
     long_description=long_description,
