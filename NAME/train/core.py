@@ -142,9 +142,9 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
                     step=step,
                     epoch=epoch)
 
-            #########################
-            # Termination criterion #
-            #########################
+            ########################
+            # Termination criteria #
+            ########################
 
             # Finished training
             if step >= NAME.STEPS:

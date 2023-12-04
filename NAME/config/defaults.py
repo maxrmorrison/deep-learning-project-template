@@ -1,4 +1,7 @@
+import os
 from pathlib import Path
+
+import GPUtil
 
 
 ###############################################################################
@@ -42,9 +45,6 @@ EVAL_DIR = Path(__file__).parent.parent.parent / 'eval'
 # Location to save training and adaptation artifacts
 RUNS_DIR = Path(__file__).parent.parent.parent / 'runs'
 
-# Location of compressed datasets on disk
-SOURCES_DIR = Path(__file__).parent.parent.parent / 'data' / 'sources'
-
 
 ###############################################################################
 # Evaluation parameters
@@ -73,7 +73,10 @@ CHECKPOINT_INTERVAL = 25000  # steps
 STEPS = 300000
 
 # Number of data loading worker threads
-NUM_WORKERS = 2
+try:
+    NUM_WORKERS = int(os.cpu_count() / max(1, len(GPUtil.getGPUs())))
+except ValueError:
+    NUM_WORKERS = os.cpu_count()
 
 # Seed for all random number generators
 RANDOM_SEED = 1234
