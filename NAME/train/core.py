@@ -116,18 +116,19 @@ def train(datasets, directory=NAME.RUNS_DIR / NAME.CONFIG):
             ############
 
             if step % NAME.EVALUATION_INTERVAL == 0:
-                evaluation_steps = (
-                    None if step == NAME.STEPS
-                    else NAME.DEFAULT_EVALUATION_STEPS)
-                evaluate_fn = functools.partial(
-                    evaluate,
-                    directory,
-                    step,
-                    model,
-                    accelerator,
-                    evaluation_steps=evaluation_steps)
-                evaluate_fn('train', train_loader)
-                evaluate_fn('valid', valid_loader)
+                with NAME.inference_context(model):
+                    evaluation_steps = (
+                        None if step == NAME.STEPS
+                        else NAME.DEFAULT_EVALUATION_STEPS)
+                    evaluate_fn = functools.partial(
+                        evaluate,
+                        directory,
+                        step,
+                        model,
+                        accelerator,
+                        evaluation_steps=evaluation_steps)
+                    evaluate_fn('train', train_loader)
+                    evaluate_fn('valid', valid_loader)
 
             ###################
             # Save checkpoint #
@@ -192,36 +193,30 @@ def evaluate(
     accelerator,
     condition,
     loader,
-    evaluation_steps=NAME.DEFAULT_EVALUATION_STEPS
+    evaluation_steps=None
 ):
     """Perform model evaluation"""
     # Setup evaluation metrics
     metrics = NAME.evaluate.Metrics()
 
-    # Prepare model for inference
-    with NAME.inference_context(model):
+    for i, batch in enumerate(loader):
 
-        for i, batch in enumerate(loader):
+        # TODO - unpack batch
+        () = batch
 
-            # TODO - unpack batch
-            () = batch
+        # Forward pass
+        () = model(
+            # TODO - args
+        )
 
-            # Forward pass
-            () = model(
-                # TODO - args
-            )
+        # Update metrics
+        metrics.update(
+            # TODO - args
+        )
 
-            # Update metrics
-            metrics.update(
-                # TODO - args
-            )
-
-            # Stop when we exceed some number of batches
-            if (
-                NAME.DEFAULT_EVALUATION_STEPS is not None and
-                i + 1 == NAME.DEFAULT_EVALUATION_STEPS
-            ):
-                break
+        # Stop when we exceed some number of batches
+        if evaluation_steps is not None and i + 1 == evaluation_steps:
+            break
 
     # Format results
     scalars = {
